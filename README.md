@@ -5,6 +5,7 @@
 A fast, private, zero-dependency web app for university students (built with a CS student, for CS students 🇵🇰). Enter your courses and grades each semester, watch your CGPA evolve on a live chart, and answer the eternal question: *"What GPA do I need from here to reach my target CGPA?"*
 
 **🔗 Live demo:** https://muhammadmudasir-gif.github.io/cgpa-planner/
+![CGPA Planner demo](assets/demo.gif)
 
 ## ✨ Features
 
