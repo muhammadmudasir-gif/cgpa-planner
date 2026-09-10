@@ -8,7 +8,8 @@ A fast, private, zero-dependency web app for university students (built with a C
 
 ## ✨ Features
 
-- 📝 **Semester & course tracking** — add courses with credit hours and grades, get instant GPA per semester
+- 📝 **Semester & course tracking** — add courses with credit hours and grades (or just type your marks — the grade is picked for you), get instant GPA per semester
+- 🇵🇰 **IIUI grading scale** — the official International Islamic University Islamabad scale: A (80%+) = 4.0 down to D (50%) = 1.0, no minus grades
 - 📈 **Progress chart** — per-semester GPA bars + running CGPA line, drawn on raw canvas (no chart libraries!)
 - 🎯 **Target simulator** — "I have a 2.8 with 3 semesters left. What do I need for a 3.4?" → instant answer, including *"that's mathematically impossible, even with straight A's"*
 - 💾 **Private by design** — data lives in your browser's localStorage only. No accounts, no servers, nothing leaves your device
@@ -57,7 +58,6 @@ node tests/gpa.test.js
 
 ## 🗺️ Roadmap
 
-- [ ] Custom grade scales (your university's exact grade points)
 - [ ] Transcript-style printable summary view
 - [ ] Dark/light theme toggle
 - [ ] PWA support (install as an app on your phone)

@@ -14,21 +14,45 @@
     window.GPA = factory(); // Browser
   }
 })(this, function () {
-  // Standard 4.0 grade scale. Universities vary slightly —
-  // edit this map to match your own university's scale.
+  // IIUI (International Islamic University Islamabad) grade
+  // scale, as per the official Academic Regulations. This is
+  // the standard Pakistani 0–4 scale — no minus grades.
   const GRADE_POINTS = {
     A: 4.0,
-    "A-": 3.7,
-    "B+": 3.3,
+    "B+": 3.5,
     B: 3.0,
-    "B-": 2.7,
-    "C+": 2.3,
+    "C+": 2.5,
     C: 2.0,
-    "C-": 1.7,
-    "D+": 1.3,
+    "D+": 1.5,
     D: 1.0,
     F: 0.0,
   };
+
+  // Marks range for each grade (for the UI + docs).
+  const GRADE_MARKS = {
+    A: "80–100%",
+    "B+": "75–79.99%",
+    B: "70–74.99%",
+    "C+": "65–69.99%",
+    C: "60–64.99%",
+    "D+": "55–59.99%",
+    D: "50–54.99%",
+    F: "below 50%",
+  };
+
+  // IIUI marks → letter grade. Marks are percentages (0–100).
+  // Returns null for invalid input (out of range or not a number).
+  function gradeFromMarks(marks) {
+    if (typeof marks !== "number" || Number.isNaN(marks) || marks < 0 || marks > 100) return null;
+    if (marks >= 80) return "A";
+    if (marks >= 75) return "B+";
+    if (marks >= 70) return "B";
+    if (marks >= 65) return "C+";
+    if (marks >= 60) return "C";
+    if (marks >= 55) return "D+";
+    if (marks >= 50) return "D";
+    return "F";
+  }
 
   const gradePoint = (grade) => GRADE_POINTS[grade];
 
@@ -98,5 +122,5 @@
     return Math.max(0, g); // already achieved → any passing GPA keeps it
   }
 
-  return { GRADE_POINTS, gradePoint, qualityPoints, semesterGPA, cgpa, cgpaTrajectory, requiredGPA };
+  return { GRADE_POINTS, GRADE_MARKS, gradePoint, gradeFromMarks, qualityPoints, semesterGPA, cgpa, cgpaTrajectory, requiredGPA };
 });

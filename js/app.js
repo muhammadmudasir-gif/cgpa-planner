@@ -28,6 +28,13 @@
   const importFileEl = $("importFile");
   const resetBtn = $("resetBtn");
 
+  // Old US-scale grades → nearest IIUI grade (A- 3.7 → B+ 3.5, etc.)
+  const LEGACY_GRADES = { "A-": "B+", "B-": "C+", "C-": "D+" };
+  const toIiuiGrade = (grade) => {
+    if (grade in LEGACY_GRADES) return LEGACY_GRADES[grade];
+    return GPA.gradePoint(grade) !== undefined ? grade : "F";
+  };
+
   // ---- Persistence (localStorage) ----
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ semesters, nextId }));
@@ -39,7 +46,10 @@
       if (!raw) return;
       const data = JSON.parse(raw);
       if (!Array.isArray(data.semesters)) return;
-      semesters = data.semesters;
+      semesters = data.semesters.map((s) => ({
+        ...s,
+        courses: (s.courses || []).map((c) => ({ ...c, grade: toIiuiGrade(c.grade) })),
+      }));
       nextId = data.nextId || semesters.length + 1;
     } catch {
       // corrupted data — start fresh rather than crash
@@ -108,8 +118,10 @@
       sem.courses.forEach((course, cIdx) => {
         const row = el("div", "course-row");
         row.appendChild(el("span", "course-name", course.name || "Untitled course"));
+        const gradeLabel =
+          typeof course.marks === "number" ? `${course.grade} (${course.marks}%)` : course.grade;
         row.appendChild(
-          el("span", "course-meta", `${course.grade} · ${course.credits} cr · ${GPA.qualityPoints(course.credits, course.grade).toFixed(1)} QP`)
+          el("span", "course-meta", `${gradeLabel} · ${course.credits} cr · ${GPA.qualityPoints(course.credits, course.grade).toFixed(1)} QP`)
         );
         const delCourse = el("button", "btn small", "✕");
         delCourse.addEventListener("click", () => {
@@ -139,21 +151,38 @@
       });
       form.appendChild(creditsSelect);
 
+      const marksInput = document.createElement("input");
+      marksInput.type = "number";
+      marksInput.min = 0;
+      marksInput.max = 100;
+      marksInput.step = "0.01";
+      marksInput.placeholder = "Marks % (optional)";
+      marksInput.title = "Type your marks and the grade is picked for you (IIUI scale)";
+      form.appendChild(marksInput);
+
       const gradeSelect = document.createElement("select");
       GRADE_OPTIONS.forEach((g) => {
         const o = document.createElement("option");
         o.value = g;
-        o.textContent = `${g} (${GPA.gradePoint(g).toFixed(1)})`;
+        o.textContent = `${g} · ${GPA.GRADE_MARKS[g]} · ${GPA.gradePoint(g).toFixed(1)}`;
         gradeSelect.appendChild(o);
       });
       form.appendChild(gradeSelect);
 
+      // Type marks → the IIUI grade is picked automatically.
+      marksInput.addEventListener("input", () => {
+        const grade = GPA.gradeFromMarks(Number(marksInput.value));
+        if (grade) gradeSelect.value = grade;
+      });
+
       const addBtn = el("button", "btn primary small", "+ Course");
       addBtn.addEventListener("click", () => {
+        const marksNum = Number(marksInput.value);
         sem.courses.push({
           name: nameInput.value.trim(),
           credits: Number(creditsSelect.value),
           grade: gradeSelect.value,
+          marks: marksInput.value !== "" && GPA.gradeFromMarks(marksNum) ? marksNum : undefined,
         });
         render();
       });
@@ -298,7 +327,8 @@
           s.courses = s.courses.map((c) => ({
             name: String(c.name || ""),
             credits: Number(c.credits) || 1,
-            grade: GPA.gradePoint(c.grade) !== undefined ? c.grade : "F",
+            grade: toIiuiGrade(c.grade),
+            marks: GPA.gradeFromMarks(Number(c.marks)) ? Number(c.marks) : undefined,
           }));
         });
         semesters = data.semesters;

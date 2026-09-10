@@ -38,14 +38,14 @@ console.log("\nRunning GPA math tests…\n");
 
 // ---- semesterGPA ----
 console.log("semesterGPA:");
-// Hand-calculated: (3×4.0 + 4×3.3 + 3×2.0) / 10 = 31.2/10 = 3.12
+// Hand-calculated (IIUI scale): (3×4.0 + 4×3.5 + 3×2.0) / 10 = 32/10 = 3.2
 const sem1 = GPA.semesterGPA([
   { name: "DSA", grade: "A", credits: 3 },
   { name: "DSA Lab", grade: "B+", credits: 4 },
   { name: "Islamiat", grade: "C", credits: 3 },
 ]);
-checkClose("mixed grades → 3.12", sem1.gpa, 3.12);
-check("quality points sum", sem1.qualityPoints, 3 * 4 + 4 * 3.3 + 3 * 2);
+checkClose("mixed grades → 3.2", sem1.gpa, 3.2);
+check("quality points sum", sem1.qualityPoints, 3 * 4 + 4 * 3.5 + 3 * 2);
 check("credits sum", sem1.credits, 10);
 
 check("empty semester → gpa null", GPA.semesterGPA([]).gpa, null);
@@ -92,10 +92,31 @@ check("zero remaining credits → null", GPA.requiredGPA(3.0, 20, 54, 0), null);
 checkClose("fresh start needs target itself", GPA.requiredGPA(3.5, 0, 0, 80), 3.5);
 
 // ---- grade scale sanity ----
-console.log("\ngrade scale:");
+console.log("\ngrade scale (IIUI):");
 check("A = 4.0", GPA.gradePoint("A"), 4);
+check("B+ = 3.5", GPA.gradePoint("B+"), 3.5);
+check("D+ = 1.5", GPA.gradePoint("D+"), 1.5);
+check("D = 1.0", GPA.gradePoint("D"), 1);
 check("F = 0.0", GPA.gradePoint("F"), 0);
 check("unknown grade = undefined", GPA.gradePoint("Z"), undefined);
+check("A- is not on the IIUI scale", GPA.gradePoint("A-"), undefined);
+
+// ---- gradeFromMarks (IIUI marks → letter grade) ----
+console.log("\ngradeFromMarks:");
+check("100 → A", GPA.gradeFromMarks(100), "A");
+check("80 → A (boundary)", GPA.gradeFromMarks(80), "A");
+check("79.99 → B+", GPA.gradeFromMarks(79.99), "B+");
+check("75 → B+ (boundary)", GPA.gradeFromMarks(75), "B+");
+check("70 → B (boundary)", GPA.gradeFromMarks(70), "B");
+check("65 → C+ (boundary)", GPA.gradeFromMarks(65), "C+");
+check("60 → C (boundary)", GPA.gradeFromMarks(60), "C");
+check("55 → D+ (boundary)", GPA.gradeFromMarks(55), "D+");
+check("50 → D (boundary)", GPA.gradeFromMarks(50), "D");
+check("49.99 → F", GPA.gradeFromMarks(49.99), "F");
+check("0 → F", GPA.gradeFromMarks(0), "F");
+check("negative marks → null", GPA.gradeFromMarks(-5), null);
+check("marks over 100 → null", GPA.gradeFromMarks(101), null);
+check("non-numeric marks → null", GPA.gradeFromMarks("eighty"), null);
 
 // ---- Summary ----
 console.log("");
