@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CGPA Planner — Track & plan your GPA</title>
+  <meta name="description" content="Track your CGPA semester by semester and simulate what GPA you need to reach your target." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <h1>📊 CGPA Planner</h1>
+    <p>Track your GPA semester by semester · Plan your way to your target CGPA</p>
+  </header>
+
+  <!-- Summary cards -->
+  <section class="summary">
+    <div class="card">
+      <p class="card-label">Current CGPA</p>
+      <p class="card-value" id="cgpaValue">—</p>
+    </div>
+    <div class="card">
+      <p class="card-label">Total Credit Hours</p>
+      <p class="card-value" id="creditsValue">0</p>
+    </div>
+    <div class="card">
+      <p class="card-label">Semesters</p>
+      <p class="card-value" id="semestersValue">0</p>
+    </div>
+  </section>
+
+  <!-- Add semester -->
+  <section class="panel">
+    <h2>Semesters</h2>
+    <div class="add-semester">
+      <input type="text" id="semesterName" placeholder="e.g. Semester 3" maxlength="40" />
+      <button id="addSemesterBtn" class="btn primary">+ Add Semester</button>
+    </div>
+    <div id="semesterList"></div>
+  </section>
+
+  <!-- Progress chart -->
+  <section class="panel">
+    <h2>Progress</h2>
+    <canvas id="chart" width="900" height="300"></canvas>
+    <p class="hint">Bars = each semester's GPA · Line = your running CGPA</p>
+  </section>
+
+  <!-- What-if simulator -->
+  <section class="panel">
+    <h2>🎯 Target Simulator</h2>
+    <p class="hint">"What do I need from here on to reach my dream CGPA?"</p>
+    <div class="sim-controls">
+      <label>Target CGPA
+        <input type="number" id="targetCgpa" value="3.5" min="0" max="4" step="0.01" />
+      </label>
+      <label>Remaining credit hours
+        <input type="number" id="remainingCredits" value="60" min="1" max="200" step="1" />
+      </label>
+      <button id="simulateBtn" class="btn primary">Calculate</button>
+    </div>
+    <div id="simResult" class="sim-result">
+      Add your semesters above, then calculate.
+    </div>
+  </section>
+
+  <!-- Data management -->
+  <section class="panel">
+    <h2>Your Data</h2>
+    <p class="hint">Everything is saved in your browser automatically (localStorage) — nothing leaves your device.</p>
+    <div class="data-controls">
+      <button id="exportBtn" class="btn">⬇ Export backup (.json)</button>
+      <label class="btn" for="importFile">⬆ Import backup</label>
+      <input type="file" id="importFile" accept=".json" hidden />
+      <button id="resetBtn" class="btn danger">Reset all data</button>
+    </div>
+  </section>
+
+  <footer>
+    <p>Built by Mudasir · <a href="https://github.com/muhammadmudasir-gif/cgpa-planner">GitHub</a> · Made for fellow CS students 🇵🇰</p>
+  </footer>
+
+  <script src="js/gpa.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
